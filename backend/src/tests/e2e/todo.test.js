@@ -74,13 +74,13 @@ describe("TODO API", () => {
   describe("GET /todo/:id --> When todo specific exist", () => {
     test("should return status 200", () => {
       return request(app)
-        .get("/todo/1")
+        .get("/todo/3")
         .expect("Content-Type", /json/)
         .expect(200);
     });
     test("should return the todo", async () => {
       return request(app)
-        .get("/todo/1")
+        .get("/todo/3")
         .expect("Content-Type", /json/)
         .expect(200)
         .then((response) => {
@@ -97,13 +97,14 @@ describe("TODO API", () => {
     test("should return status 404", () => {
       const todoRepositorySpy = jest.spyOn(todoRepository, "getOne");
       todoRepositorySpy.mockImplementationOnce(() => Promise.resolve());
+
       return request(app).get("/todo/1").expect(404);
     });
   });
-  describe("DELETE /todo/:id --> When todo specific exist", () => {
+  describe("DELETE /todo/:id --> Delete todo specific", () => {
     test.todo("should return status 200");
   });
-  describe("DELETE /todo/:id --> When todo specific not exist", () => {
+  describe("DELETE /todo/:id --> When todo specific to delete not exist", () => {
     test.todo("should return status 404");
   });
   describe("UPDATE /todo/:id --> When todo specific exist", () => {

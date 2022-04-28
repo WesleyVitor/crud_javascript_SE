@@ -10,7 +10,28 @@ export class TodoRepository {
     return await prisma.todo.findMany();
   }
 
-  async getOne() {
-    return await prisma.todo.findFirst();
+  async getOne(todoID) {
+    return await prisma.todo.findFirst({
+      where: {
+        id: todoID,
+      },
+    });
+  }
+
+  async deleteOne(todoID) {
+    await prisma.todo.delete({
+      where: {
+        id: todoID,
+      },
+    });
+  }
+
+  async updateOne(todoID, newTodo) {
+    await prisma.todo.update({
+      where: {
+        id: todoID,
+      },
+      data: newTodo,
+    });
   }
 }

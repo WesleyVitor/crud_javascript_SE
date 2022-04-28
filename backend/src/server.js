@@ -28,13 +28,39 @@ app.get("/todo", async (req, res) => {
 });
 
 app.get("/todo/:id", (req, res) => {
-  todoRepository.getOne().then((todo) => {
+  const id = Number(req.params.id);
+  todoRepository.getOne(id).then((todo) => {
     if (todo != undefined) {
       return res.status(200).json(todo);
     } else {
       return res.status(404).json({});
     }
   });
+});
+
+app.delete("/todo/:id", (req, res) => {
+  const id = Number(req.params.id);
+  todoRepository
+    .deleteOne(id)
+    .then(() => {
+      res.status(200).json(id);
+    })
+    .catch((err) => {
+      res.status(500).json({ msg: "db Error" });
+    });
+});
+
+app.put("/todo/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const newTodo = req.body;
+  todoRepository
+    .updateOne(id, newTodo)
+    .then(() => {
+      res.status(200).json(id);
+    })
+    .catch(() => {
+      res.status(4040).json();
+    });
 });
 
 export default app;
