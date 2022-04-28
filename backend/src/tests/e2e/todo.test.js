@@ -73,12 +73,21 @@ describe("TODO API", () => {
 
   describe("GET /todo/:id --> When todo specific exist", () => {
     test("should return status 200", () => {
+      const todoRepositorySpy = jest.spyOn(todoRepository, "getOne");
+      todoRepositorySpy.mockImplementationOnce(() => Promise.resolve({}));
       return request(app)
         .get("/todo/3")
         .expect("Content-Type", /json/)
         .expect(200);
     });
     test("should return the todo", async () => {
+      const todoRepositorySpy = jest.spyOn(todoRepository, "getOne");
+      todoRepositorySpy.mockImplementationOnce(() =>
+        Promise.resolve({
+          title: "Jogar LOL",
+          description: "Muito ruim",
+        })
+      );
       return request(app)
         .get("/todo/3")
         .expect("Content-Type", /json/)
