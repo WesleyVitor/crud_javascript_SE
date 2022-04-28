@@ -5,4 +5,8 @@ export class TodoRepository {
       data: todo,
     });
   }
+
+  async getAll() {
+    return await prisma.todo.findMany();
+  }
 }
