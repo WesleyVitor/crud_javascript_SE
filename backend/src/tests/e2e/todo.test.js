@@ -1,6 +1,7 @@
 import { test, describe, expect, jest } from "@jest/globals";
 import request from "supertest";
 import app from "../../server.js";
+import { todoRepository } from "../../repository/todoRepository.js";
 describe("TODO API", () => {
   describe("POST /todo/ --> When todo is created", () => {
     test("should return status 201", () => {
@@ -61,15 +62,43 @@ describe("TODO API", () => {
         });
     });
   });
+
   describe("GET /todo --> When todos not exists", () => {
-    test.todo("should return status 404");
+    test("should return status 404", () => {
+      const todoRepositorySpy = jest.spyOn(todoRepository, "getAll");
+      todoRepositorySpy.mockImplementationOnce(() => Promise.resolve([]));
+      return request(app).get("/todo").expect(404);
+    });
   });
+
   describe("GET /todo/:id --> When todo specific exist", () => {
-    test.todo("should return status 200");
-    test.todo("should return the todo specific");
+    test("should return status 200", () => {
+      return request(app)
+        .get("/todo/1")
+        .expect("Content-Type", /json/)
+        .expect(200);
+    });
+    test("should return the todo", async () => {
+      return request(app)
+        .get("/todo/1")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toEqual(
+            expect.objectContaining({
+              title: expect.any(String),
+              description: expect.any(String),
+            })
+          );
+        });
+    });
   });
   describe("GET /todo/:id --> When todo specific not exist", () => {
-    test.todo("should return status 404");
+    test("should return status 404", () => {
+      const todoRepositorySpy = jest.spyOn(todoRepository, "getOne");
+      todoRepositorySpy.mockImplementationOnce(() => Promise.resolve());
+      return request(app).get("/todo/1").expect(404);
+    });
   });
   describe("DELETE /todo/:id --> When todo specific exist", () => {
     test.todo("should return status 200");
