@@ -9,4 +9,8 @@ export class TodoRepository {
   async getAll() {
     return await prisma.todo.findMany();
   }
+
+  async getOne() {
+    return await prisma.todo.findFirst();
+  }
 }
