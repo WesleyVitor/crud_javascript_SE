@@ -10,7 +10,7 @@ describe("TODO API", () => {
         .expect("Content-Type", /json/)
         .expect(201);
     });
-    test.todo("should return a todo created", async () => {
+    test("should return a todo created", async () => {
       return request(app)
         .post("/todo")
         .send({ title: "Fazer algo", description: "É para ser feito assim" })
