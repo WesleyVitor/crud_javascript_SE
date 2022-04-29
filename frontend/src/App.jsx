@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Todo from "./components/Todo";
+import ListTodos from "./components/listTodo";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="App">
-      <h1>Hello World</h1>
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Todo />}>
+            <Route path="list" element={<ListTodos />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

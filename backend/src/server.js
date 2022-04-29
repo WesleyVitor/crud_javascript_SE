@@ -1,7 +1,8 @@
 import express from "express";
-
+import cors from "cors";
 import { todoRepository } from "./repository/todoRepository.js";
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.post("/todo", (req, res) => {
