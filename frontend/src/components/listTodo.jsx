@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../service/api";
-import { Li } from "./ListTodoStyle";
+import { Table } from "./ListTodoStyle";
 const ListTodos = () => {
   const [todos, setTodos] = useState([]);
   useEffect(() => {
@@ -8,33 +8,41 @@ const ListTodos = () => {
       setTodos(response.data);
     });
   }, [todos]);
+
+  const handleDelete = (todoID) => {
+    api.delete(`/todo/${todoID}`);
+  };
+
   return (
-    <main>
-      <ul>
+    <Table>
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Descrição</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
         {todos.map((todo, index) => {
           if (!todo.done) {
             return (
-              <Li key={index}>
-                <div>
-                  <p>
-                    {" "}
-                    <span>Título:</span>
-                    {todo.title}
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    {" "}
-                    <span>Descrição:</span>
-                    {todo.description}
-                  </p>
-                </div>
-              </Li>
+              <tr key={index}>
+                <td>
+                  <p>|{todo.title}</p>
+                </td>
+                <td>
+                  <p>|{todo.description}</p>
+                </td>
+                <td>
+                  <button onClick={() => handleDelete(todo.id)}>Deletar</button>
+                </td>
+              </tr>
             );
           }
         })}
-      </ul>
-    </main>
+      </tbody>
+      <ul></ul>
+    </Table>
   );
 };
 

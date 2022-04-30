@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Li = styled.li`
-  display: flex;
-  flex-direction: column;
+export const Table = styled.table`
+  border: 1px solid #000;
+  min-width: 600px;
 `;
