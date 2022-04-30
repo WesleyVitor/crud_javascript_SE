@@ -4,8 +4,23 @@ import { todoRepository } from "./repository/todoRepository.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(logar);
+// Isto está aberto, mas é uma possibilidade de autorização e posteriormente autenticação
+function logar(req, res, next) {
+  if (req.user == null) {
+    req.user = 1;
+  }
+  next();
+}
 
-app.post("/todo", (req, res) => {
+const authUser = (req, res, next) => {
+  if (req.user == null) {
+    res.status(403).json({ msg: "Not Allowed" });
+  }
+  next();
+};
+
+app.post("/todo", authUser, (req, res) => {
   const todo = req.body;
 
   todoRepository
@@ -18,7 +33,7 @@ app.post("/todo", (req, res) => {
     });
 });
 
-app.get("/todo", async (req, res) => {
+app.get("/todo", authUser, async (req, res) => {
   todoRepository.getAll().then((todos) => {
     if (todos.length > 0) {
       return res.status(200).json(todos);
@@ -28,7 +43,7 @@ app.get("/todo", async (req, res) => {
   });
 });
 
-app.get("/todo/:id", (req, res) => {
+app.get("/todo/:id", authUser, (req, res) => {
   const id = Number(req.params.id);
   todoRepository.getOne(id).then((todo) => {
     if (todo != undefined) {
@@ -39,7 +54,7 @@ app.get("/todo/:id", (req, res) => {
   });
 });
 
-app.delete("/todo/:id", (req, res) => {
+app.delete("/todo/:id", authUser, (req, res) => {
   const id = Number(req.params.id);
   todoRepository
     .deleteOne(id)
@@ -51,7 +66,7 @@ app.delete("/todo/:id", (req, res) => {
     });
 });
 
-app.put("/todo/:id", (req, res) => {
+app.put("/todo/:id", authUser, (req, res) => {
   const id = Number(req.params.id);
   const newTodo = req.body;
   todoRepository
