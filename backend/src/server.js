@@ -60,7 +60,7 @@ app.put("/todo/:id", (req, res) => {
       res.status(200).json(id);
     })
     .catch(() => {
-      res.status(4040).json();
+      res.status(404).json();
     });
 });
 
