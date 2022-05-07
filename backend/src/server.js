@@ -14,11 +14,7 @@ app.use(express.json());
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(
   sessions({
-<<<<<<< HEAD
     secret: process.env.SESSION_KEY,
-=======
-    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
->>>>>>> e06d0d7e6245950706928db7d4398947bb36a716
     saveUninitialized: true,
     cookie: { maxAge: oneDay },
     resave: false,
