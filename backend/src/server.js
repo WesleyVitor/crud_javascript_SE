@@ -1,21 +1,31 @@
 import express from "express";
 import cors from "cors";
 import { todoRepository } from "./repository/todoRepository.js";
+import {
+  insertUser,
+  getUserByUsernamePassword,
+} from "./repository/userRepository.js";
+import sessions from "express-session";
+import cookieParser from "cookie-parser";
 const app = express();
+var session;
 app.use(cors());
 app.use(express.json());
-app.use(logar);
-// Isto está aberto, mas é uma possibilidade de autorização e posteriormente autenticação
-function logar(req, res, next) {
-  if (req.user == null) {
-    req.user = 1;
-  }
-  next();
-}
+const oneDay = 1000 * 60 * 60 * 24;
+app.use(
+  sessions({
+    secret: process.env.SESSION_KEY,
+    saveUninitialized: true,
+    cookie: { maxAge: oneDay },
+    resave: false,
+  })
+);
+app.use(cookieParser());
 
 const authUser = (req, res, next) => {
-  if (req.user == null) {
-    res.status(403).json({ msg: "Not Allowed" });
+  session = req.session;
+  if (!session.userID) {
+    res.status(404).json({ msg: "Miss Auth" });
   }
   next();
 };
@@ -34,6 +44,7 @@ app.post("/todo", authUser, (req, res) => {
 });
 
 app.get("/todo", authUser, async (req, res) => {
+  console.log("SESSION TODO:", req.session);
   todoRepository.getAll().then((todos) => {
     if (todos.length > 0) {
       return res.status(200).json(todos);
@@ -79,4 +90,35 @@ app.put("/todo/:id", authUser, (req, res) => {
     });
 });
 
+app.post("/user", async (req, res) => {
+  const user = req.body;
+  await insertUser(user)
+    .then(() => {
+      res.status(201).json(user);
+    })
+    .catch((e) => {
+      res.status(500).json({ msg: e });
+    });
+});
+
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  const user = await getUserByUsernamePassword(username, password);
+  if (!user) {
+    res.status(404).json({ msg: "User Not Found" });
+    return;
+  }
+
+  session = req.session;
+  if (!session.userID) {
+    session.userID = username;
+  }
+  res.status(200).json({ msg: "OK" });
+});
+
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
+});
 export default app;
